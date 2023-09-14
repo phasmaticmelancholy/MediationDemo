@@ -1,0 +1,20 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="newschema">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="newname" type="xs:string"/>
+      <xs:element name="newdata" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="newtime" type="xs:dateTime" />
+            <xs:element name="newvalue" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="newid" type="xs:string" use="required"/>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema> 

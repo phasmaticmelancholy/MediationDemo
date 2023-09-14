@@ -1,0 +1,20 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="oldschema">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="oldname" type="xs:string"/>
+      <xs:element name="olddata" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="oldtime" type="xs:dateTime" />
+            <xs:element name="oldvalue" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="oldid" type="xs:string" use="required"/>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema> 
