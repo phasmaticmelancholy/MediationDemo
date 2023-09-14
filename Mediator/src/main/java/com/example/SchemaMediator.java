@@ -27,10 +27,10 @@ public class SchemaMediator {
     private static Schema newSchema;
 
     /**
-     *
-     * @param schemaClass
-     * @param schemaFilePath
-     * @return
+     * Takes a provided schema class and relative location to schema file and instantiates a Schema object.
+     * @param schemaClass The class containing the actual schema definitions
+     * @param schemaFilePath Relative location in resources directory of the XSD
+     * @return {@link Schema}
      */
     private static Schema loadSchema(Class schemaClass, String schemaFilePath)
     {
@@ -49,9 +49,9 @@ public class SchemaMediator {
     }
 
     /**
-     *
-     * @param classes
-     * @return
+     * Instantiates JAXBContext from given ObjectFactory classes.
+     * @param classes ObjectFactories to use
+     * @return {@link JAXBContext}
      */
     private static JAXBContext loadContext(Class... classes)
     {
@@ -68,9 +68,9 @@ public class SchemaMediator {
     }
 
     /**
-     *
-     * @param anOldStyleData
-     * @return
+     * Mediates old style complex object to the new format.
+     * @param anOldStyleData {@link Oldschema.Olddata} complex type
+     * @return {@link Newschema.Newdata} complex type
      */
     private static Newschema.Newdata mediate(Oldschema.Olddata anOldStyleData)
     {
@@ -90,9 +90,9 @@ public class SchemaMediator {
     }
 
     /**
-     *
-     * @param anOldStyleXML
-     * @return
+     * Transfers old schema style'd JAXB object data into a new schema styled JAXB object.
+     * @param anOldStyleXML {@link Oldschema} old data
+     * @return {@link Newschema} new data
      */
     public static Newschema mediate(Oldschema anOldStyleXML)
     {
@@ -116,7 +116,7 @@ public class SchemaMediator {
     }
 
     /**
-     *
+     * Initializes necessary context and schema objects.
      */
     private static void initialize()
     {
@@ -128,10 +128,10 @@ public class SchemaMediator {
     }
 
     /**
-     *
-     * @param anOldStyleXML
-     * @return
-     * @throws MediationException
+     * Instantiates an XML file to a JAXBObject.
+     * @param anOldStyleXML File containing an old schema style'd XML
+     * @return {@link Oldschema}
+     * @throws MediationException A schema validation error occurred
      */
     private static Oldschema unmarshal(File anOldStyleXML) throws MediationException
     {
@@ -149,9 +149,9 @@ public class SchemaMediator {
     }
 
     /**
-     *
-     * @param newStyleXML
-     * @throws MediationException
+     * Transforms a JAXB object in the new schema style to a String that's then written to console.
+     * @param newStyleXML {@link Newschema}
+     * @throws MediationException A schema validation error occurred
      */
     private static void marshal(Newschema newStyleXML) throws MediationException
     {
@@ -168,9 +168,15 @@ public class SchemaMediator {
     }
 
     /**
+     * Main runner for program; expects 1 argument containing the path to a file containing an XML that uses the
+     * OldSchema.xsd.
      *
-     * @param args
-     * @throws MediationException
+     * //TODO Make this into a runnable jar
+     * //TODO Make exceptions clearer
+     * //TODO Add ability to take folder in as input
+     * //TODO Add Apache Karaf functionality
+     * @param args Commandline arguments
+     * @throws MediationException A schema validation exception has occurred.
      */
     public static void main(String[] args) throws MediationException {
 
