@@ -20,11 +20,68 @@ import java.nio.file.Paths;
  */
 public class SchemaMediator {
 
-    private static JAXBContext oldContext;
-    private static JAXBContext newContext;
+    private JAXBContext oldContext;
+    private JAXBContext newContext;
 
-    private static Schema oldSchema;
-    private static Schema newSchema;
+    private Schema oldSchema;
+    private Schema newSchema;
+
+    public SchemaMediator()
+    {
+        initialize();
+    }
+
+    /**
+     * Initializes necessary context and schema objects.
+     */
+    private void initialize()
+    {
+        newSchema = loadSchema(Newschema.class, "/NewSchema.xsd");
+        oldSchema = loadSchema(Oldschema.class, "/OldSchema.xsd");
+
+        newContext = loadContext(com.example.schema.ObjectFactory.class, Newschema.class);
+        oldContext = loadContext(com.example.schema.ObjectFactory.class, Oldschema.class);
+    }
+
+    /**
+     * Instantiates an XML file to a JAXBObject.
+     * @param anOldStyleXML File containing an old schema style'd XML
+     * @return {@link Oldschema}
+     * @throws MediationException A schema validation error occurred
+     */
+    protected Oldschema unmarshal(File anOldStyleXML) throws MediationException
+    {
+        try
+        {
+            Unmarshaller oldSchemaUnmarshaller = oldContext.createUnmarshaller();
+            oldSchemaUnmarshaller.setSchema(oldSchema);
+
+            return (Oldschema) oldSchemaUnmarshaller.unmarshal(anOldStyleXML);
+        }
+        catch (JAXBException e)
+        {
+            throw new MediationException();
+        }
+    }
+
+    /**
+     * Transforms a JAXB object in the new schema style to a String that's then written to console.
+     * @param newStyleXML {@link Newschema}
+     * @throws MediationException A schema validation error occurred
+     */
+    protected void marshal(Newschema newStyleXML) throws MediationException
+    {
+        try
+        {
+            Marshaller marshaller = newContext.createMarshaller();
+            marshaller.setSchema(newSchema);
+            marshaller.marshal(newStyleXML, System.out);
+        }
+        catch (JAXBException e)
+        {
+            throw new MediationException();
+        }
+    }
 
     /**
      * Takes a provided schema class and relative location to schema file and instantiates a Schema object.
@@ -83,7 +140,7 @@ public class SchemaMediator {
 
         if(anOldStyleData.getOldvalue() != null)
         {
-            newStyleData.setNewvalue(anOldStyleData.getOldvalue());
+            newStyleData.setNewvalue(anOldStyleData.getOldvalue().toLowerCase());
         }
 
         return newStyleData;
@@ -116,58 +173,6 @@ public class SchemaMediator {
     }
 
     /**
-     * Initializes necessary context and schema objects.
-     */
-    private static void initialize()
-    {
-        newSchema = loadSchema(Newschema.class, "/NewSchema.xsd");
-        oldSchema = loadSchema(Oldschema.class, "/OldSchema.xsd");
-
-        newContext = loadContext(com.example.schema.ObjectFactory.class, Newschema.class);
-        oldContext = loadContext(com.example.schema.ObjectFactory.class, Oldschema.class);
-    }
-
-    /**
-     * Instantiates an XML file to a JAXBObject.
-     * @param anOldStyleXML File containing an old schema style'd XML
-     * @return {@link Oldschema}
-     * @throws MediationException A schema validation error occurred
-     */
-    private static Oldschema unmarshal(File anOldStyleXML) throws MediationException
-    {
-        try
-        {
-            Unmarshaller oldSchemaUnmarshaller = oldContext.createUnmarshaller();
-            oldSchemaUnmarshaller.setSchema(oldSchema);
-
-            return (Oldschema) oldSchemaUnmarshaller.unmarshal(anOldStyleXML);
-        }
-        catch (JAXBException e)
-        {
-            throw new MediationException();
-        }
-    }
-
-    /**
-     * Transforms a JAXB object in the new schema style to a String that's then written to console.
-     * @param newStyleXML {@link Newschema}
-     * @throws MediationException A schema validation error occurred
-     */
-    private static void marshal(Newschema newStyleXML) throws MediationException
-    {
-        try
-        {
-            Marshaller marshaller = newContext.createMarshaller();
-            marshaller.setSchema(newSchema);
-            marshaller.marshal(newStyleXML, System.out);
-        }
-        catch (JAXBException e)
-        {
-            throw new MediationException();
-        }
-    }
-
-    /**
      * Main runner for program; expects 1 argument containing the path to a file containing an XML that uses the
      * OldSchema.xsd.
      *
@@ -181,12 +186,12 @@ public class SchemaMediator {
     public static void main(String[] args) throws MediationException {
 
         if(args.length > 0) {
-            initialize();
+            SchemaMediator sm = new SchemaMediator();
 
             File oldStyleXMLFile = Paths.get(args[0]).toFile();
-            Oldschema oldStyleXML = unmarshal(oldStyleXMLFile);
+            Oldschema oldStyleXML = sm.unmarshal(oldStyleXMLFile);
             Newschema newStyleXML = mediate(oldStyleXML);
-            marshal(newStyleXML);
+            sm.marshal(newStyleXML);
         }
         else
         {
